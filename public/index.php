@@ -271,7 +271,7 @@ call_user_func(function () {
             )
         );
 
-        return $response->withAddedHeader('Location', '/');
+        return $response->withAddedHeader('Location', '/building/' . $request->getAttribute('buildingId'));
     });
 
     $app->post('/checkout/{buildingId}', function (Request $request, Response $response) use ($sm) {
@@ -283,7 +283,7 @@ call_user_func(function () {
             )
         );
 
-        return $response->withAddedHeader('Location', '/');
+        return $response->withAddedHeader('Location', '/building/' . $request->getAttribute('buildingId'));
     });
 
     $app->run();
