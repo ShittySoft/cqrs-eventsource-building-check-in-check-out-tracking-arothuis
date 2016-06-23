@@ -188,6 +188,50 @@ call_user_func(function () {
                     )
                 );
             },
+            DomainEvent\UserCheckedIntoBuilding::class . '-listeners' => function (ContainerInterface $container) {
+                // EventListeners go here
+                return [];
+            },
+            DomainEvent\UserCheckedOutOfBuilding::class . '-listeners' => function (ContainerInterface $container) {
+                // EventListeners go here
+                return [];
+            },
+            DomainEvent\UserCheckedIntoBuilding::class . '-projectors' => function (ContainerInterface $container) {
+                // Projectors go here
+                return [
+                    function (DomainEvent\UserCheckedIntoBuilding $event) {
+                        $path = __DIR__ . '/' . $event->aggregateId() . '.json';
+
+                        $existingUsers = [];
+
+                        if (file_exists($path)) {
+                            $existingUsers = json_decode(file_get_contents($path), true);
+                        }
+
+                        $existingUsers[] = $event->username();
+
+                        file_put_contents($path, json_encode((array_values($existingUsers))));
+                    }
+                ];
+            },
+            DomainEvent\UserCheckedOutOfBuilding::class . '-projectors' => function (ContainerInterface $container) {
+                // Projectors go here
+                return [
+                    function (DomainEvent\UserCheckedOutOfBuilding $event) {
+                        $path = __DIR__ . '/' . $event->aggregateId() . '.json';
+
+                        if (file_exists($path)) {
+                            $existingUsers = array_flip(json_decode(file_get_contents($path), true));
+                        }
+
+                        if (isset($existingUsers[$event->username()])) {
+                            unset ($existingUsers[$event->username()]);
+
+                            file_put_contents($path, json_encode((array_keys($existingUsers))));
+                        }
+                    }
+                ];
+            },
         ],
     ]);
 
