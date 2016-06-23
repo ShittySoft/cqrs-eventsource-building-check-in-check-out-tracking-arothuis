@@ -8,6 +8,7 @@ use Building\Domain\DomainEvent;
 use Building\Domain\Repository\BuildingRepositoryInterface;
 use Building\Infrastructure\CommandHandler;
 use Building\Infrastructure\CommandHandler\RegisterNewBuildingHandler;
+use Building\Infrastructure\CommandHandler\CheckUserIntoBuildingHandler;
 use Building\Infrastructure\Repository\BuildingRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOSqlite\Driver;
@@ -168,8 +169,11 @@ call_user_func(function () {
             },
 
             // Command -> CommandHandlerFactory
-            Command\RegisterNewBuilding::class => function (ContainerInterface $container) : RegisterNewBuildingHandler {
+            Command\RegisterNewBuilding::class         => function (ContainerInterface $container) : RegisterNewBuildingHandler {
                 return new RegisterNewBuildingHandler($container->get(BuildingRepositoryInterface::class));
+            },
+            Command\CheckUserIntoBuilding::class => function (ContainerInterface $container) : CheckUserIntoBuildingHandler {
+                return new CheckUserIntoBuildingHandler($container->get(BuildingRepositoryInterface::class));
             },
             BuildingRepositoryInterface::class => function (ContainerInterface $container) : BuildingRepositoryInterface {
                 return new BuildingRepository(
