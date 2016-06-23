@@ -231,7 +231,15 @@ call_user_func(function () {
     });
 
     $app->post('/checkout/{buildingId}', function (Request $request, Response $response) use ($sm) {
+        $commandBus = $sm->get(CommandBus::class);
+        $commandBus->dispatch(
+            Command\CheckUserOutOfBuilding::fromUsernameAndBuildingId(
+                $request->getParsedBody()['username'],
+                $request->getAttribute('buildingId')
+            )
+        );
 
+        return $response->withAddedHeader('Location', '/');
     });
 
     $app->run();
